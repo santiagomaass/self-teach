@@ -33,7 +33,7 @@ vector<int> sieve(int n) {
     return spf;
 }
 
-// returns shortest path found with BFS
+// returns shortest path from node "start" to "end" found with BFS. graph is an adjacency list
 vector<int> shortestPath(const vector<vector<int> >& graph, int start, int end) {
     int numNodes = graph.size();
     if (start < 1 || start > numNodes || end < 1 || end > numNodes) {
@@ -84,24 +84,27 @@ vector<int> shortestPath(const vector<vector<int> >& graph, int start, int end) 
 int main() {
     int n;
     cin >> n;
-    int N = 300000;
-    int MAX = 0;
+    int N = 300000; // max possible input value
+    int MAX = 0; // max input value received
     vector<int> legs(n+1); // legs[i] = number of legs of i-spider
     
     for(int i=1; i<n+1; i++) {
         cin >> legs[i];
         MAX = max(MAX, legs[i]);
     }
-
+    // precalculate spf for every input
     vector<int> spf = sieve(MAX);
-    vector< vector<int> > adj(MAX + N + 1); // graph
+    vector< vector<int> > adj(MAX + N + 1); // graph. adj[i] = list of neighbours of i
 
     // create bidirectional graph
     for(int node=1; node<n+1; node++) {
         int x = legs[node]; // variable that calculates prime factors
-        vector<int> pfactors; // set of prime factors
+        vector<int> pfactors; // set of prime factors, neighbours in graph
         while (x != 1) {
-            pfactors.push_back(spf[x] + N);
+            // add N to prime factors so it differences
+            // from input prime numbers
+            pfactors.push_back(spf[x] + N); 
+                
 
             // add opposite direction in the graph
             adj[spf[x] + N].push_back(node);
